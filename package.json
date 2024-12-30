@@ -1,0 +1,43 @@
+{
+  "type": "module",
+  "name": "r4g-faceit-stats",
+  "version": "1.0.0",
+  "description": "Faceit Stats Checker by R4G Duckyy",
+  "main": "./src/main/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron .",
+    "build": "electron-builder"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^30.0.9",
+    "electron-builder": "^25.0.0-alpha.9"
+  },
+  "build": {
+    "appId": "com.r4g_duckyy.faceitstats",
+    "productName": "R4G Faceit Stats",
+    "files": [
+      "src/**/*",
+      "assets/**/*",
+      "node_modules/**/*"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "mac": {
+      "category": "public.app-category.utilities"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
+  },
+  "dependencies": {
+    "electron-store": "^10.0.0"
+  }
+}

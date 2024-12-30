@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faceit Stats</title>
+    <link rel="stylesheet" href="./../css/main.css">
+</head>
+<body>
+    <div id="container">
+        <h1 id="competition">Faceit Stats</h1>
+        <input type="text" id="matchLink" placeholder="Enter Faceit matchroom link">
+        <button id="fetchStats" class="button">Get Stats</button>
+        <button id="settings-button" class="button">Settings</button>
+        <div id="split-view">
+            <div class="team" id="teamA">
+                <h2 id="teamAName">Team A</h2>
+                <div id="teamAResults"></div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th data-key="map">Map</th>
+                            <th data-key="played">Played</th>
+                            <th data-key="wins">Wins</th>
+                            <th data-key="scores">Scores</th>
+                        </tr>
+                    </thead>
+                    <tbody id="teamA-map-stats">
+                        <!-- Team A map stats will be inserted here -->
+                    </tbody>
+                </table>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th data-key="player">Player</th>
+                                <th data-key="matches">Matches</th>
+                                <th data-key="kills">Kills</th>
+                                <th data-key="deaths">Deaths</th>
+                                <th data-key="kd">K/D</th>
+                                <th data-key="assists">Assists</th>
+                                <th data-key="3k">3K</th>
+                                <th data-key="4k">4K</th>
+                                <th data-key="ace">Ace</th>
+                                <th data-key="headshot">Headshot %</th>
+                                <th data-key="mvps">MVPs</th>
+                            </tr>
+                        </thead>
+                        <tbody id="teamA-player-stats">
+                            <!-- Team A player stats will be inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="team" id="teamB">
+                <h2 id="teamBName">Team B</h2>
+                <div id="teamBResults"></div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th data-key="map">Map</th>
+                            <th data-key="played">Played</th>
+                            <th data-key="wins">Wins</th>
+                            <th data-key="scores">Scores</th>
+                        </tr>
+                    </thead>
+                    <tbody id="teamB-map-stats">
+                        <!-- Team B map stats will be inserted here -->
+                    </tbody>
+                </table>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th data-key="player">Player</th>
+                                <th data-key="matches">Matches</th>
+                                <th data-key="kills">Kills</th>
+                                <th data-key="deaths">Deaths</th>
+                                <th data-key="kd">K/D</th>
+                                <th data-key="assists">Assists</th>
+                                <th data-key="3k">3K</th>
+                                <th data-key="4k">4K</th>
+                                <th data-key="ace">Ace</th>
+                                <th data-key="headshot">Headshot %</th>
+                                <th data-key="mvps">MVPs</th>
+                            </tr>
+                        </thead>
+                        <tbody id="teamB-player-stats">
+                            <!-- Team B player stats will be inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div id="promotions">
+            <p>Follow us on Twitter/X: <a href="https://x.com/duckyyde" target="_blank" class="external-link">@duckyyde</a>, <a href="https://x.com/regnum4games" target="_blank" class="external-link">@regnum4games</a>
+            </p>
+        </div>
+    </div>
+    <div id="loading-overlay" class="hidden">
+        <div id="spinner"></div>
+        <p id="loading-text">Fetching match data...</p>
+    </div>
+    <script src="./../js/renderer.js"></script>
+</body>
+</html>

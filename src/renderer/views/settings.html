@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings</title>
+    <link rel="stylesheet" href="./../css/settings.css">
+</head>
+<body>
+    <div id="settings-container">
+        <h1>Settings</h1>
+        <div class="settings-group">
+            <label for="apiKeyInput">Faceit API Key</label>
+            <input type="text" id="apiKeyInput" placeholder="Enter your API key">
+        </div>
+        <button id="saveSettings" class="button">Save</button>
+		<p>
+			Don't have an API key? 
+			<a href="#" id="apiKeyGuideLink">Click here to learn how to get one.</a>
+		</p>
+    </div>
+	<!-- Modal for Faceit API Guide -->
+	<div id="apiKeyGuideModal" class="modal">
+		<div class="modal-content">
+			<span  id="closeModal" class="close">&times;</span>
+			<h2>How to Get a Faceit API Key</h2>
+			<ol>
+				<li>Go to the Faceit Developer Portal: <a href="https://developers.faceit.com/" target="_blank" id="devportal">developers.faceit.com</a>.</li>
+				<li>Log in with your Faceit account.</li>
+				<li>Open the App Studio</li>
+				<li>Create a new API application by clicking "Create New App".</li>
+				<li>Fill out the required fields (name, description, etc.) and submit.</li>
+				<li>Click on the newly created application.</li>
+				<li>Head to the API section.</li>
+				<li>Create a new client-sided API key.</li>
+				<li>Copy your API key and paste it into the field in this app.</li>
+			</ol>
+		</div>
+	</div>
+    <script src="./../js/settings.cjs"></script>
+</body>
+</html>
