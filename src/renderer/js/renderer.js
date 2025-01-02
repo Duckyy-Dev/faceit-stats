@@ -9,6 +9,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const teamBMapStatsElement = document.getElementById('teamB-map-stats');
     const teamAPlayerStatsElement = document.getElementById('teamA-player-stats');
     const teamBPlayerStatsElement = document.getElementById('teamB-player-stats');
+    const teamAName = document.getElementById('teamAName');
+    const teamBName = document.getElementById('teamBName');
 
     const tables = document.querySelectorAll(".table-container");
     const tableHeaders = document.querySelectorAll(".playerStatsTable thead th");
@@ -138,6 +140,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             const faction1Id = matchData.teams.faction1.faction_id;
             const faction2Id = matchData.teams.faction2.faction_id;
 
+            teamAName.innerHTML = matchData.teams.faction1.name;
+            teamBName.innerHTML = matchData.teams.faction2.name;
+
+
             const allMatches = await getRelevantMatches(competitionId, faction1Id, faction2Id);
             const matchStats = await getAllMatchStats(allMatches);
     
@@ -189,12 +195,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 offset += limit;
             }
-
-            console.log(`Fetched ${allMatches.length} matches in total.`);
-            return allMatches;
-
         } catch (error) {
             console.error(`Error fetching matches: ${error.message}`);
+        }
+        finally {
             console.log(`Fetched ${allMatches.length} matches in total.`);
             return allMatches;
         }
@@ -239,11 +243,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         } catch (error) {
             console.error(`Error fetching matches: ${error.message}`);
-            console.log(`Only fetched ${matchStats.length} / ${matchIds.length} matches`)
+        }
+        finally {
+            console.log(`Fetched ${matchStats.length} / ${matchIds.length} matches`)
             return matchStats;
         }
-
-        return matchStats;
     }
 
     const calculateMapStats = (matchStats, factionId) => {
@@ -265,16 +269,25 @@ document.addEventListener('DOMContentLoaded', async () => {
         
                     if(stats.Winner == factionId){
                         mapStats[mapName].wins++;
-                        mapStats[mapName].scores.push(stats.Score.replace(' ', ''));
                     }
-                    else {
-                        mapStats[mapName].scores.push(stats.Score.split('/').reverse().join('/').trim());
-                    }
+                    mapStats[mapName].scores.push(formatMatchResult(stats.Score, match.teams[0].team_id == factionId));
                 }
             });
         });
     
         return mapStats;
+    }
+
+    const formatMatchResult = (score, isFirstTeam) => {
+        score = score.replaceAll(' ', '');
+        console.log("score: ", score);
+        console.log('isFirstTeam: ', isFirstTeam);
+        if(isFirstTeam){
+            return score;
+        }
+        if(!isFirstTeam){
+            return score.split('/').reverse().join('/');
+        }
     }
 
     const calculatePlayerStats = (matchStats, factionId) => {
