@@ -10,6 +10,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     const teamAPlayerStatsElement = document.getElementById('teamA-player-stats');
     const teamBPlayerStatsElement = document.getElementById('teamB-player-stats');
 
+    const tables = document.querySelectorAll(".table-container");
+    const tableHeaders = document.querySelectorAll(".playerStatsTable thead th");
+    const contextMenu = document.createElement("div");
+    contextMenu.classList.add("context-menu");
+    document.body.appendChild(contextMenu);
+    const addedKeys = new Set();
+    const hiddenColumns = new Set(); // Track columns that are currently hidden
+
     // Handle external links to open in the default browser
     const externalLinks = document.querySelectorAll('a.external-link');
     externalLinks.forEach(link => {
@@ -72,7 +80,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const mapStat = mapStats[map];
             const mapRow = document.createElement('tr');
             mapRow.innerHTML = `
-                <td style="background-image: url('./../../../assets/maps/${map}.jpg');">${map}</td>
+                <td style="background-image: url('./../../../assets/maps/${map}.jpg');background-position: center; background-size: cover; height: 30px;width: 150px;color: white; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);">${map}</td>
                 <td>${mapStat.played}</td>
                 <td>${mapStat.wins}</td>
                 <td>${mapStat.scores.join(' || ')}</td>
@@ -82,24 +90,23 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Update player stats
         for (const player in playerStats) {
-            const stats = playerStats[player];
-            const playerRow = document.createElement('tr');
-            playerRow.innerHTML = `
-                <td>${stats.nickname}</td>
-                <td>${stats.matches}</td>
-                <td>${stats.kills}</td>
-                <td>${stats.deaths}</td>
-                <td>${stats.averageKD}</td>
-                <td>${stats.assists}</td>
-                <td>${stats.triple_kills}</td>
-                <td>${stats.quadro_kills}</td>
-                <td>${stats.penta_kills}</td>
-                <td>${stats.headshot_percentage}</td>
-                <td>${stats.mvps}</td>
-            `;
-            playerStatsElement.appendChild(playerRow);
+            addPlayerRow(playerStats[player], playerStatsElement);
         }
     };
+
+    const addPlayerRow = (player, tablebody) => {
+        const row = document.createElement("tr");
+    
+        for (const key in player) {
+            const cell = document.createElement("td");
+            cell.dataset.key = key;
+            cell.textContent = player[key];
+            row.appendChild(cell);
+        }
+        
+        tablebody.appendChild(row);
+        applyColumnVisibility();
+    }
 
     const fetchMatchData = async (matchLink) => {
         try {
@@ -188,7 +195,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         } catch (error) {
             console.error(`Error fetching matches: ${error.message}`);
-            return [];
+            console.log(`Fetched ${allMatches.length} matches in total.`);
+            return allMatches;
         }
     };
     
@@ -231,7 +239,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         } catch (error) {
             console.error(`Error fetching matches: ${error.message}`);
-            return [];
+            console.log(`Only fetched ${matchStats.length} / ${matchIds.length} matches`)
+            return matchStats;
         }
 
         return matchStats;
@@ -269,7 +278,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     const calculatePlayerStats = (matchStats, factionId) => {
-        const playerStats = {};
+        let playerStats = {};
 
         matchStats.forEach(game => {
             game.rounds.forEach(match => {
@@ -280,50 +289,50 @@ document.addEventListener('DOMContentLoaded', async () => {
                             playerStats[player.player_id] = {
                                 nickname: player.nickname,
                                 matches: 0,
-                                utilityDamage: 0,
-                                flashSuccessRatePerMatch: 0,
-                                knifeKills: 0,
+                                kills: 0,
+                                deaths: 0,
+                                kd: 0,
+                                adr: 0,
+                                headshotPercentage: 0,
+                                headshots: 0,
+                                kr: 0,
+                                assists: 0,
                                 damage: 0,
+                                utilityDamage: 0,
+                                flashesPerRound: 0,
+                                flashCount: 0,
                                 flashSuccesses: 0,
-                                utilitySuccessRatePerMatch: 0,
-                                sniperKills: 0,
+                                flashSuccessRatePerMatch: 0,
+                                enemiesFlashed: 0,
                                 enemiesFlashedPerRound: 0,
-                                oneVoneWins: 0,
-                                oneVtwoCount: 0,
-                                tripleKills: 0,
-                                match1v2WinRate: 0,
+                                utilityEnemies: 0,
+                                utilityCount: 0,
+                                utilityDamegePerRound: 0,
+                                utilityDamageSuccessRatePerMatch: 0,
+                                utilitySuccessRatePerMatch: 0,
+                                utilityUsagePerRound: 0,
+                                sniperKills: 0,
+                                sniperKillRatePerRound: 0,
                                 clutchKills: 0,
+                                doubleKills: 0,
+                                tripleKills: 0,
+                                quadroKills: 0,
+                                pentaKills: 0,
                                 matchEntryRate: 0,
+                                entryCount: 0,
+                                entryWins: 0,
+                                entrySuccessRate: 0,
+                                firstKills: 0,
+                                oneVoneWins: 0,
+                                oneVoneCount: 0,
+                                match1v1Winrate: 0,
+                                oneVtwoWins: 0,
+                                oneVtwoCount: 0,
+                                match1v2WinRate: 0,
                                 zeusKills: 0,
                                 mvps: 0,
-                                enemiesFlashed: 0,
-                                oneVtwoWins: 0,
                                 pistolKills: 0,
-                                flashCount: 0,
-                                matchEntrySuccessRate: 0,
-                                kills: 0,
-                                headshotPercentage: 0,
-                                utilityCount: 0,
-                                pentaKills: 0,
-                                adr: 0,
-                                deaths: 0,
-                                sniperKillRatePerRound: 0,
-                                entryWins: 0,
-                                utilityUsagePerRound: 0,
-                                entryCount: 0,
-                                headshots: 0,
-                                assists: 0,
-                                flashesPerRound: 0,
-                                utilityEnemies: 0,
-                                oneVoneCount: 0,
-                                utilityDamageSuccessRatePerMatch: 0,
-                                doubleKills: 0,
-                                firstKills: 0,
-                                kd: 0,
-                                kr: 0,
-                                match1v1Winrate: 0,
-                                quadroKills: 0,
-                                utilityDamegePerRound: 0,
+                                knifeKills: 0
                             }
                         }
     
@@ -332,7 +341,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         };
                         playerStats[player.player_id].matches++;
                         playerStats[player.player_id].utilityDamage += parseFloat(player.player_stats["Utility Damage"]);
-                        playerStats[player.player_id].FlashSuccessRatePerMatch += parseFloat(player.player_stats["Flash Success Rate per Match"]);
+                        playerStats[player.player_id].flashSuccessRatePerMatch += parseFloat(player.player_stats["Flash Success Rate per Match"]);
                         playerStats[player.player_id].knifeKills += parseFloat(player.player_stats["Knife Kills"]);
                         playerStats[player.player_id].damage += parseFloat(player.player_stats["Damage"]);
                         playerStats[player.player_id].flashSuccesses += parseFloat(player.player_stats["Flash Successes"]);
@@ -352,7 +361,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         playerStats[player.player_id].oneVtwoWins += parseFloat(player.player_stats["1v2Wins"]);
                         playerStats[player.player_id].pistolKills += parseFloat(player.player_stats["Pistol Kills"]);
                         playerStats[player.player_id].flashCount += parseFloat(player.player_stats["Flash Count"]);
-                        playerStats[player.player_id].matchEntrySuccessRate += parseFloat(player.player_stats["Match Entry Success Rate"]);
+                        playerStats[player.player_id].entrySuccessRate += parseFloat(player.player_stats["Match Entry Success Rate"]);
                         playerStats[player.player_id].kills += parseFloat(player.player_stats["Kills"]);
                         playerStats[player.player_id].headshotPercentage += parseFloat(player.player_stats["Headshots %"]);
                         playerStats[player.player_id].utilityCount += parseFloat(player.player_stats["Utility Count"]);
@@ -380,6 +389,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
             });
         });
+
+        for(let playerId of Object.keys(playerStats)){
+            let player = playerStats[playerId];
+            for (let key in player) {
+                if(typeof player[key] === 'number' && key != "matches")
+                    player[key] = (player[key] / player["matches"]).toFixed(2);
+            }
+        }
     
         return playerStats;
     }
@@ -394,4 +411,81 @@ document.addEventListener('DOMContentLoaded', async () => {
             throw new Error("Invalid match link. Please provide a valid Faceit matchroom link.");
         }
     }
+
+    const applyColumnVisibility = () => {
+        tables.forEach((table) => {
+            const tableHeaders = table.querySelectorAll("thead th");
+            const tableRows = table.querySelectorAll("tbody tr");
+    
+            // Toggle visibility of the headers
+            tableHeaders.forEach((th) => {
+                const colKey = th.dataset.key;
+                th.style.display = hiddenColumns.has(colKey) ? "none" : "";
+            });
+    
+            // Toggle visibility of the cells
+            tableRows.forEach((row) => {
+                Array.from(row.children).forEach((cell) => {
+                    const colKey = cell.dataset.key;
+                    cell.style.display = hiddenColumns.has(colKey) ? "none" : "";
+                });
+            });
+        });
+    }
+
+    // Populate context menu with checkboxes for each column
+    tableHeaders.forEach((header) => {
+        const key = header.dataset.key;
+
+        if (!addedKeys.has(key)) {
+            addedKeys.add(key);
+            const label = header.textContent;
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.checked = true;
+            checkbox.dataset.key = key;
+    
+            const labelElement = document.createElement("label");
+            labelElement.textContent = label;
+            labelElement.prepend(checkbox);
+            contextMenu.appendChild(labelElement);
+            contextMenu.appendChild(document.createElement("br"));
+    
+            // Toggle column visibility when checkbox is clicked
+            checkbox.addEventListener("change", (event) => {
+                const isChecked = event.target.checked;
+                const colKey = event.target.dataset.key;
+
+                if (isChecked) {
+                    hiddenColumns.delete(colKey);
+                } 
+                else {
+                    hiddenColumns.add(colKey);
+                }
+
+                applyColumnVisibility();
+            });
+        }
+    });
+
+    // Show context menu on right-click
+    tables.forEach((table) => {
+        table.addEventListener("contextmenu", (event) => {
+            event.preventDefault();
+            const { clientX: mouseX, clientY: mouseY } = event;
+            contextMenu.style.left = `${mouseX}px`;
+            contextMenu.style.top = `${mouseY}px`;
+            contextMenu.style.display = "block";
+        });
+    });
+
+    // Stop propagation of clicks inside the context menu
+    contextMenu.addEventListener("click", (event) => {
+        event.stopPropagation(); // Prevent hiding the menu when clicking inside it
+    });
+
+    // Hide context menu when clicking elsewhere
+    document.addEventListener("click", () => {
+        contextMenu.style.display = "none";
+    });
 });

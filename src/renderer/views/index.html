@@ -1,106 +1,174 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Faceit Stats</title>
-    <link rel="stylesheet" href="./../css/main.css">
-</head>
-<body>
-    <div id="container">
-        <h1 id="competition">Faceit Stats</h1>
-        <input type="text" id="matchLink" placeholder="Enter Faceit matchroom link">
-        <button id="fetchStats" class="button">Get Stats</button>
-        <button id="settings-button" class="button">Settings</button>
-        <div id="split-view">
-            <div class="team" id="teamA">
-                <h2 id="teamAName">Team A</h2>
-                <div id="teamAResults"></div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th data-key="map">Map</th>
-                            <th data-key="played">Played</th>
-                            <th data-key="wins">Wins</th>
-                            <th data-key="scores">Scores</th>
-                        </tr>
-                    </thead>
-                    <tbody id="teamA-map-stats">
-                        <!-- Team A map stats will be inserted here -->
-                    </tbody>
-                </table>
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th data-key="player">Player</th>
-                                <th data-key="matches">Matches</th>
-                                <th data-key="kills">Kills</th>
-                                <th data-key="deaths">Deaths</th>
-                                <th data-key="kd">K/D</th>
-                                <th data-key="assists">Assists</th>
-                                <th data-key="3k">3K</th>
-                                <th data-key="4k">4K</th>
-                                <th data-key="ace">Ace</th>
-                                <th data-key="headshot">Headshot %</th>
-                                <th data-key="mvps">MVPs</th>
-                            </tr>
-                        </thead>
-                        <tbody id="teamA-player-stats">
-                            <!-- Team A player stats will be inserted here -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="team" id="teamB">
-                <h2 id="teamBName">Team B</h2>
-                <div id="teamBResults"></div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th data-key="map">Map</th>
-                            <th data-key="played">Played</th>
-                            <th data-key="wins">Wins</th>
-                            <th data-key="scores">Scores</th>
-                        </tr>
-                    </thead>
-                    <tbody id="teamB-map-stats">
-                        <!-- Team B map stats will be inserted here -->
-                    </tbody>
-                </table>
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th data-key="player">Player</th>
-                                <th data-key="matches">Matches</th>
-                                <th data-key="kills">Kills</th>
-                                <th data-key="deaths">Deaths</th>
-                                <th data-key="kd">K/D</th>
-                                <th data-key="assists">Assists</th>
-                                <th data-key="3k">3K</th>
-                                <th data-key="4k">4K</th>
-                                <th data-key="ace">Ace</th>
-                                <th data-key="headshot">Headshot %</th>
-                                <th data-key="mvps">MVPs</th>
-                            </tr>
-                        </thead>
-                        <tbody id="teamB-player-stats">
-                            <!-- Team B player stats will be inserted here -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        <div id="promotions">
-            <p>Follow us on Twitter/X: <a href="https://x.com/duckyyde" target="_blank" class="external-link">@duckyyde</a>, <a href="https://x.com/regnum4games" target="_blank" class="external-link">@regnum4games</a>
-            </p>
-        </div>
-    </div>
-    <div id="loading-overlay" class="hidden">
-        <div id="spinner"></div>
-        <p id="loading-text">Fetching match data...</p>
-    </div>
-    <script src="./../js/renderer.js"></script>
-</body>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Faceit Stats</title>
+        <link rel="stylesheet" href="./../css/main.css">
+    </head>
+    <body>
+        <div id="container">
+            <h1 id="competition">Faceit Stats</h1>
+            <input type="text" id="matchLink" placeholder="Enter Faceit matchroom link">
+            <button id="fetchStats" class="button">Get Stats</button>
+            <button id="settings-button" class="button">Settings</button>
+            <div id="split-view">
+                <div class="team" id="teamA">
+                    <h2 id="teamAName">Team A</h2>
+                    <div id="teamAResults"></div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th data-key="map">Map</th>
+                                <th data-key="played">Played</th>
+                                <th data-key="wins">Wins</th>
+                                <th data-key="scores">Scores</th>
+                            </tr>
+                        </thead>
+                        <tbody id="teamA-map-stats">
+                            <!-- Team A map stats will be inserted here --></tbody>
+                    </table>
+                    <div class="table-container">
+                        <table id="playerAStatsTable" class="playerStatsTable">
+                            <thead>
+                                <tr id="tableHeaders">
+                                    <th data-key="nickname">Player</th>
+									<th data-key="matches">Matches</th>
+									<th data-key="kills">Kills</th>
+									<th data-key="deaths">Deaths</th>
+									<th data-key="kd">K/D</th>
+									<th data-key="adr">ADR</th>
+									<th data-key="headshotPercentage">Headshot Percentage</th>
+									<th data-key="headshots">Headshots</th>
+									<th data-key="kr">K/R</th>
+									<th data-key="assists">Assists</th>
+									<th data-key="damage">Damage</th>
+									<th data-key="utilityDamage">Utility Damage</th>
+									<th data-key="flashesPerRound">Flashes/Round</th>
+									<th data-key="flashCount">Flash Count</th>
+									<th data-key="flashSuccesses">Flash Successes</th>
+									<th data-key="flashSuccessRatePerMatch">Flash Success Rate</th>
+									<th data-key="enemiesFlashed">Enemies Flashed</th>
+									<th data-key="enemiesFlashedPerRound">Enemies Flashed/Round</th>
+									<th data-key="utilityEnemies">Utility Enemies</th>
+									<th data-key="utilityCount">Utility Count</th>
+									<th data-key="utilityDamegePerRound">Utility Damage/Round</th>
+									<th data-key="utilityDamageSuccessRatePerMatch">Utility Damage Success Rate</th>
+									<th data-key="utilitySuccessRatePerMatch">Utility Success Rate</th>
+									<th data-key="utilityUsagePerRound">Utility Usage/Round</th>
+									<th data-key="sniperKills">Sniper Kills</th>
+									<th data-key="sniperKillRatePerRound">Sniper Kill Rate/Round</th>
+									<th data-key="clutchKills">Clutch Kills</th>
+									<th data-key="doubleKills">Double Kills</th>
+									<th data-key="tripleKills">Triple Kills</th>
+									<th data-key="quadroKills">Quadro Kills</th>
+									<th data-key="pentaKills">Penta Kills</th>
+									<th data-key="matchEntryRate">Entry Rate</th>
+									<th data-key="entryCount">Entry Count</th>
+									<th data-key="entryWins">Entry Wins</th>
+									<th data-key="entrySuccessRate">Entry Success Rate</th>
+									<th data-key="firstKills">First Kills</th>
+									<th data-key="oneVoneWins">1v1 Wins</th>
+									<th data-key="oneVoneCount">1v1 Count</th>
+									<th data-key="match1v1Winrate">1v1 Win Rate</th>
+									<th data-key="oneVtwoWins">1v2 Wins</th>
+									<th data-key="oneVtwoCount">1v2 Count</th>
+									<th data-key="match1v2WinRate">1v2 Win Rate</th>
+									<th data-key="zeusKills">Zeus Kills</th>
+									<th data-key="mvps">MVPs</th>
+									<th data-key="pistolKills">Pistol Kills</th>
+									<th data-key="knifeKills">Knife Kills</th>
+                                </tr>
+                            </thead>
+                            <tbody id="teamA-player-stats">
+                                <!-- Team A player stats will be inserted here --></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="team" id="teamB">
+                    <h2 id="teamBName">Team B</h2>
+                    <div id="teamBResults"></div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th data-key="map">Map</th>
+                                <th data-key="played">Played</th>
+                                <th data-key="wins">Wins</th>
+                                <th data-key="scores">Scores</th>
+                            </tr>
+                        </thead>
+                        <tbody id="teamB-map-stats">
+                            <!-- Team B map stats will be inserted here --></tbody>
+                    </table>
+                    <div class="table-container">
+                        <table id="playerBStatsTable" class="playerStatsTable">
+                            <thead>
+                                <tr id="tableHeaders">
+                                    <th data-key="nickname">Player</th>
+									<th data-key="matches">Matches</th>
+									<th data-key="kills">Kills</th>
+									<th data-key="deaths">Deaths</th>
+									<th data-key="kd">K/D</th>
+									<th data-key="adr">ADR</th>
+									<th data-key="headshotPercentage">Headshot Percentage</th>
+									<th data-key="headshots">Headshots</th>
+									<th data-key="kr">K/R</th>
+									<th data-key="assists">Assists</th>
+									<th data-key="damage">Damage</th>
+									<th data-key="utilityDamage">Utility Damage</th>
+									<th data-key="flashesPerRound">Flashes/Round</th>
+									<th data-key="flashCount">Flash Count</th>
+									<th data-key="flashSuccesses">Flash Successes</th>
+									<th data-key="flashSuccessRatePerMatch">Flash Success Rate</th>
+									<th data-key="enemiesFlashed">Enemies Flashed</th>
+									<th data-key="enemiesFlashedPerRound">Enemies Flashed/Round</th>
+									<th data-key="utilityEnemies">Utility Enemies</th>
+									<th data-key="utilityCount">Utility Count</th>
+									<th data-key="utilityDamegePerRound">Utility Damage/Round</th>
+									<th data-key="utilityDamageSuccessRatePerMatch">Utility Damage Success Rate</th>
+									<th data-key="utilitySuccessRatePerMatch">Utility Success Rate</th>
+									<th data-key="utilityUsagePerRound">Utility Usage/Round</th>
+									<th data-key="sniperKills">Sniper Kills</th>
+									<th data-key="sniperKillRatePerRound">Sniper Kill Rate/Round</th>
+									<th data-key="clutchKills">Clutch Kills</th>
+									<th data-key="doubleKills">Double Kills</th>
+									<th data-key="tripleKills">Triple Kills</th>
+									<th data-key="quadroKills">Quadro Kills</th>
+									<th data-key="pentaKills">Penta Kills</th>
+									<th data-key="matchEntryRate">Entry Rate</th>
+									<th data-key="entryCount">Entry Count</th>
+									<th data-key="entryWins">Entry Wins</th>
+									<th data-key="entrySuccessRate">Entry Success Rate</th>
+									<th data-key="firstKills">First Kills</th>
+									<th data-key="oneVoneWins">1v1 Wins</th>
+									<th data-key="oneVoneCount">1v1 Count</th>
+									<th data-key="match1v1Winrate">1v1 Win Rate</th>
+									<th data-key="oneVtwoWins">1v2 Wins</th>
+									<th data-key="oneVtwoCount">1v2 Count</th>
+									<th data-key="match1v2WinRate">1v2 Win Rate</th>
+									<th data-key="zeusKills">Zeus Kills</th>
+									<th data-key="mvps">MVPs</th>
+									<th data-key="pistolKills">Pistol Kills</th>
+									<th data-key="knifeKills">Knife Kills</th>
+                                </tr>
+                            </thead>
+                            <tbody id="teamB-player-stats">
+                                <!-- Team B player stats will be inserted here --></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div id="promotions">
+                <p>Follow us on Twitter/X:
+                    <a href="https://x.com/duckyyde" target="_blank" class="external-link">@duckyyde</a>,
+                    <a href="https://x.com/regnum4games" target="_blank" class="external-link">@regnum4games</a>
+                </p>
+            </div>
+        </div>
+        <div id="loading-overlay" class="hidden">
+            <div id="spinner"></div>
+            <p id="loading-text">Fetching match data...</p>
+        </div>
+        <script src="./../js/renderer.js"></script>
+    </body>
 </html>
