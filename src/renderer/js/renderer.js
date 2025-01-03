@@ -18,8 +18,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     contextMenu.classList.add("context-menu");
     document.body.appendChild(contextMenu);
     const addedKeys = new Set();
-    const hiddenColumns = new Set(); // Track columns that are currently hidden
 
+    let hiddenColumnsSetting = await window.api.loadSetting('hiddenColumns');
+
+    let hiddenColumns = hiddenColumnsSetting == null ? new Set(['headshots', 'damage', 'flashCount', 'flashSuccesses', 'enemiesFlashed', 'utilityEnemies', 'utilityCount',
+            'doubleKills', 'tripleKills', 'quadroKills', 'pentaKills', 'entryWins', 'firstKills', 'oneVoneWins', 'oneVtwoWins',
+            'zeusKills', 'mvps', 'pistolKills', 'knifeKills'])
+            : new Set(JSON.parse(hiddenColumnsSetting));
+	
     // Handle external links to open in the default browser
     const externalLinks = document.querySelectorAll('a.external-link');
     externalLinks.forEach(link => {
@@ -280,8 +286,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const formatMatchResult = (score, isFirstTeam) => {
         score = score.replaceAll(' ', '');
-        console.log("score: ", score);
-        console.log('isFirstTeam: ', isFirstTeam);
         if(isFirstTeam){
             return score;
         }
@@ -455,7 +459,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const label = header.textContent;
             const checkbox = document.createElement("input");
             checkbox.type = "checkbox";
-            checkbox.checked = true;
+            checkbox.checked = hiddenColumns == null ? true : !hiddenColumns.has(key); // adjust to default/saved configuration
             checkbox.dataset.key = key;
     
             const labelElement = document.createElement("label");
@@ -465,7 +469,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             contextMenu.appendChild(document.createElement("br"));
     
             // Toggle column visibility when checkbox is clicked
-            checkbox.addEventListener("change", (event) => {
+            checkbox.addEventListener("change", async (event) => {
                 const isChecked = event.target.checked;
                 const colKey = event.target.dataset.key;
 
@@ -476,6 +480,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     hiddenColumns.add(colKey);
                 }
 
+                await window.api.saveSetting('hiddenColumns', JSON.stringify([...hiddenColumns]));
                 applyColumnVisibility();
             });
         }
@@ -501,4 +506,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.addEventListener("click", () => {
         contextMenu.style.display = "none";
     });
+
+    // Apply the default column visibility on startup
+    applyColumnVisibility();
 });

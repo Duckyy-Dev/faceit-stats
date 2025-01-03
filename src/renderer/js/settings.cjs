@@ -1,6 +1,3 @@
-// Elements
-
-
 // Load API key on startup
 document.addEventListener('DOMContentLoaded', async () => {
     const apiKeyInput = document.getElementById('apiKeyInput');
