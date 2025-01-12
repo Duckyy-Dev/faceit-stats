@@ -2,7 +2,8 @@ import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
-import { autoUpdater } from "electron-updater";
+import updater from 'electron-updater';
+const { autoUpdater } = updater;
 
 
 let mainWindow;
@@ -39,6 +40,10 @@ app.on('window-all-closed', () => {
 
 app.on('activate', () => {
     if (!mainWindow) mainWindow = createMainWindow();
+});
+
+app.on('uncaughtException', function (error) {
+    app.quit();
 });
 
 /**
