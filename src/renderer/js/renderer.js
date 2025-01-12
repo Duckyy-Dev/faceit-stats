@@ -232,8 +232,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const matchStats = [];
 
-        try {
-            for(let i = 0; i < matchIds.length; i++) {
+        for(let i = 0; i < matchIds.length; i++) {
+            try {
                 const response = await fetch(`https://open.faceit.com/data/v4/matches/${matchIds[i]}/stats`, {
                     headers: {
                         Authorization: `Bearer ${apiKey}`,
@@ -247,13 +247,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const data = await response.json();
                 matchStats.push(data);
             }
-        } catch (error) {
-            console.error(`Error fetching matches: ${error.message}`);
-        }
-        finally {
-            console.log(`Fetched ${matchStats.length} / ${matchIds.length} matches`)
-            return matchStats;
-        }
+            catch (error) {
+                console.error(`Error fetching matches: ${error.message}`);
+            }
+        } 
+        console.log(`Fetched ${matchStats.length} / ${matchIds.length} matches`)
+        return matchStats;
     }
 
     const calculateMapStats = (matchStats, factionId) => {
