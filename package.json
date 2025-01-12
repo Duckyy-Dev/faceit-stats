@@ -28,10 +28,12 @@
       "output": "dist"
     },
     "mac": {
-      "category": "public.app-category.utilities"
+      "category": "public.app-category.utilities",
+      "icon": "./assets/icons/app.icns"
     },
     "win": {
-      "target": "nsis"
+      "target": "nsis",
+      "icon": "./assets/icons/app.png"
     },
     "linux": {
       "target": "AppImage"

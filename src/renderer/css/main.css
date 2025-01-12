@@ -8,7 +8,6 @@ body {
 }
 
 h1, h2 {
-    margin-bottom: 20px;
     color: #EF6C00;
 }
 
@@ -33,7 +32,6 @@ input[type="text"] {
     width: 100%;
     max-width: 600px;
     padding: 10px;
-    margin-bottom: 20px;
     border-radius: 5px;
     border: 1px solid #ddd;
     font-size: 1rem;
@@ -52,15 +50,28 @@ input[type="text"] {
 }
 
 .button:hover {
-    background-color: #3a4e7b;
+    background-color: darkorange;
 }
 
 #fetchStats {
-    margin-bottom: 20px;
+    background-image: url('../../../assets/logos/faceit.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 70%;
+    width: 40px;
+    height: 40px;
+    padding: 0px 20px;
+    margin: 0px 0px 0px -50px;
 }
 
 #settings-button {
-    margin-top: 10px;
+    background-image: url('../../../assets/icons/settings.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 70%;
+    width: 40px;
+    height: 40px;
+    margin: 0px 0px 0px 0px;
 }
 
 /* Split View for Teams */
@@ -200,4 +211,19 @@ a {
 
 .context-menu input[type="checkbox"] {
     margin-right: 10px;
+}
+
+#controls {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center; /* Align items vertically if they vary in height */
+    gap: 10px; /* Optional: Add space between elements */
+}
+
+#matchLink {
+    flex: 1; /* Optional: Make the input field take more space */
+}
+
+.button {
+    white-space: nowrap; /* Prevent text from wrapping inside buttons */
 }
