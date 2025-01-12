@@ -2,6 +2,7 @@ import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
+import { autoUpdater } from "electron-updater";
 
 
 let mainWindow;
@@ -15,6 +16,21 @@ app.on('ready', async () => {
     store = new Store();
     mainWindow = createMainWindow();
     setupIPC();
+
+    autoUpdater.checkForUpdatesAndNotify();
+
+    autoUpdater.on('update-available', () => {
+        console.log('Update available.');
+    });
+
+    autoUpdater.on('update-downloaded', () => {
+        console.log('Update downloaded. Will install now...');
+        autoUpdater.quitAndInstall();
+    });
+
+    autoUpdater.on('error', (error) => {
+        console.error('Update error:', error);
+    });
 });
 
 app.on('window-all-closed', () => {

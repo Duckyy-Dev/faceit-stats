@@ -152,6 +152,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const allMatches = await getRelevantMatches(competitionId, faction1Id, faction2Id);
             const matchStats = await getAllMatchStats(allMatches);
+
+            const notAnalyzed = allMatches.length - matchStats.length;
+            if(notAnalyzed > 0){
+                alert(`No stats gathered for ${notAnalyzed} defwins/deflosses`);
+            }
     
             // Process match data
             return processMatchData(matchStats, faction1Id, faction2Id);
