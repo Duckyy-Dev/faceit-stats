@@ -56,6 +56,7 @@ function createMainWindow() {
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
             contextIsolation: true,
+            devTools: false,
         },
     });
 
@@ -81,6 +82,7 @@ function createSettingsWindow() {
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
             contextIsolation: true,
+            devTools: false,
         },
     });
 
