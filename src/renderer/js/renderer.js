@@ -19,6 +19,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.body.appendChild(contextMenu);
     const addedKeys = new Set();
 
+    function logMessage(level, message) {
+        window.api.log(level, message);
+    }
+
     let hiddenColumnsSetting = await window.api.loadSetting('hiddenColumns');
 
     let hiddenColumns = hiddenColumnsSetting == null ? new Set(['headshots', 'damage', 'flashCount', 'flashSuccesses', 'enemiesFlashed', 'utilityEnemies', 'utilityCount',
@@ -51,7 +55,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             updateUI(matchData.faction1Stats.mapStats, matchData.faction1Stats.playerStats, teamAMapStatsElement, teamAPlayerStatsElement);
             updateUI(matchData.faction2Stats.mapStats, matchData.faction2Stats.playerStats, teamBMapStatsElement, teamBPlayerStatsElement);
         } catch (error) {
-            console.error('Error fetching match data:', error);
+            logMessage('error', `Error fetching match data: ${error}`);
             alert('Failed to fetch match data. Please try again.');
         } finally {
             hideLoadingOverlay();
@@ -123,6 +127,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Fetch match data using the API
             const apiKey = await window.api.loadSetting('apiKey'); // Securely retrieve the API key
             if (!apiKey) {
+                logMessage('info', `API Key is not set. Please configure it in settings.`);
                 throw new Error('API Key is not set. Please configure it in settings.');
             }
     
@@ -134,11 +139,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
     
             if (!response.ok) {
+                logMessage('error', `Failed to fetch match data: ${response.statusText}`);
                 throw new Error(`Failed to fetch match data: ${response.statusText}`);
             }
     
             const matchData = await response.json();
             if (matchData.competition_type != 'championship') {
+                logMessage('info', 'The requested match is not part of a Faceit Championship.');
                 throw new Error('The requested match is not part of a Faceit Championship.')
             }
 
@@ -162,7 +169,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             return processMatchData(matchStats, faction1Id, faction2Id);
     
         } catch (error) {
-            console.error(error.message);
+            logMessage('error', error.message);
             alert(`Error: ${error.message}`);
         }
     }
@@ -207,10 +214,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                 offset += limit;
             }
         } catch (error) {
-            console.error(`Error fetching matches: ${error.message}`);
+            logMessage('error', `Error fetching matches: ${error.message}`);
         }
         finally {
-            console.log(`Fetched ${allMatches.length} matches in total.`);
+            logMessage('info', `Fetched ${allMatches.length} matches in total.`);
             return allMatches;
         }
     };
@@ -253,10 +260,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                 matchStats.push(data);
             }
             catch (error) {
-                console.error(`Error fetching matches: ${error.message}`);
+                logMessage('error', `Error fetching matches: ${error.message}`);
             }
         } 
-        console.log(`Fetched ${matchStats.length} / ${matchIds.length} matches`)
+        logMessage('info', `Fetched ${matchStats.length} / ${matchIds.length} matches`);
         return matchStats;
     }
 

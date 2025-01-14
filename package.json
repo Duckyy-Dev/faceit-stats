@@ -11,11 +11,6 @@
   },
   "keywords": [],
   "author": "DuckyyDE",
-  "publish": {
-    "provider": "github",
-    "owner": "Duckyy-Dev",
-    "repo": "faceit-stats"
-  },
   "license": "ISC",
   "devDependencies": {
     "electron": "^30.0.9",
@@ -32,21 +27,38 @@
     "directories": {
       "output": "dist"
     },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "Duckyy-Dev",
+        "repo": "faceit-stats"
+      }
+    ],
     "mac": {
       "category": "public.app-category.utilities",
       "icon": "./assets/icons/app.icns",
-      "target": ["dmg", "zip"]
+      "target": [
+        "dmg",
+        "zip"
+      ]
     },
     "win": {
-      "target": ["nsis", "zip"],
+      "target": [
+        "nsis",
+        "zip"
+      ],
       "icon": "./assets/icons/app.png"
     },
     "linux": {
-      "target": ["AppImage", "deb"]
+      "target": [
+        "AppImage",
+        "deb"
+      ]
     }
   },
   "dependencies": {
     "electron-store": "^10.0.0",
-    "electron-updater": "^6.3.9"
+    "electron-updater": "^6.3.9",
+    "winston": "^3.17.0"
   }
 }
