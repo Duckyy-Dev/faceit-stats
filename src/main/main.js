@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url';
 import fs from 'fs';
 import updater from 'electron-updater';
 const { autoUpdater } = updater;
+import winston from 'winston';
 
 
 let mainWindow;
@@ -12,26 +13,58 @@ let store;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const customLevels = {
+    levels: {
+        error: 0,
+        warn: 1,
+        info: 2,
+        debug: 3
+    },
+    colors: {
+        error: 'red',
+        warn: 'yellow',
+        info: 'green',
+        debug: 'blue'
+    }
+};
+
+const logger = winston.createLogger({
+    level: customLevels.levels,
+    format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.printf(({ timestamp, level, message }) => {
+            return `${timestamp} ${level}: ${message}`;
+        })
+    ),
+    transports: [
+        new winston.transports.File({ filename: path.join(__dirname, 'app.log'), level: 'debug' }),
+        new winston.transports.Console()
+    ]
+});
+
+winston.addColors(customLevels.colors);
+
 app.on('ready', async () => {
     const { default: Store } = await import('electron-store');
     store = new Store();
     mainWindow = createMainWindow();
     setupIPC();
 
+    logger.info('Application started.');
     autoUpdater.checkForUpdatesAndNotify();
+});
 
-    autoUpdater.on('update-available', () => {
-        console.log('Update available.');
-    });
+autoUpdater.on('update-available', () => {
+    logger.info('Update available.');
+});
 
-    autoUpdater.on('update-downloaded', () => {
-        console.log('Update downloaded. Will install now...');
-        autoUpdater.quitAndInstall();
-    });
+autoUpdater.on('update-downloaded', () => {
+    logger.info('Update downloaded. Will install now...');
+    autoUpdater.quitAndInstall();
+});
 
-    autoUpdater.on('error', (error) => {
-        console.error('Update error:', error);
-    });
+autoUpdater.on('error', (error) => {
+    logger.error('Update error:', error);
 });
 
 app.on('window-all-closed', () => {
@@ -43,6 +76,7 @@ app.on('activate', () => {
 });
 
 app.on('uncaughtException', function (error) {
+    logger.error('Uncaught exception:', error);
     app.quit();
 });
 
@@ -122,6 +156,10 @@ function setupIPC() {
 		const win = BrowserWindow.getFocusedWindow();
 		if (win) win.close();
 	});
+
+    ipcMain.on('log-message', (event, level, message) => {
+        logger.log({ level, message });
+    });
 }
 
 /**
@@ -136,7 +174,7 @@ function loadSettings(key) {
         const settings = JSON.parse(fs.readFileSync(settingsPath));
         return settings[key] || null;
     } catch (error) {
-        console.error('Error loading settings:', error);
+        logger.error('Error loading settings:', error);
         return null;
     }
 }
@@ -158,7 +196,7 @@ function saveSettings(key, value) {
         settings[key] = value;
         fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2));
     } catch (error) {
-        console.error('Error saving settings:', error);
+        logger.error('Error saving settings:', error);
     }
 }
 

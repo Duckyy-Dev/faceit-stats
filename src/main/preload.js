@@ -23,6 +23,7 @@ contextBridge.exposeInMainWorld('api', {
             ipcRenderer.on(channel, (_, ...args) => callback(...args));
         }
     },
+    log: (level, message) => ipcRenderer.send('log-message', level, message),
 
     // Removes listeners for the specified channel
     removeAllListeners: (channel) => {
