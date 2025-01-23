@@ -90,7 +90,7 @@ function createMainWindow() {
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
             contextIsolation: true,
-            devTools: true,
+            devTools: false,
         },
     });
 

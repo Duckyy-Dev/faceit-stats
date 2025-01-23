@@ -131,33 +131,44 @@ document.addEventListener('DOMContentLoaded', async () => {
                 throw new Error('API Key is not set. Please configure it in settings.');
             }
     
-            const response = await fetch(`https://open.faceit.com/data/v4/matches/${matchId}`, {
+            // const response = await fetch(`https://open.faceit.com/data/v4/matches/${matchId}`, {
+            //     headers: {
+            //         Authorization: `Bearer ${apiKey}`,
+            //         'Content-Type': 'application/json',
+            //     },
+            // });
+            
+            //use old endpoint instead to also fetch elo
+            const response = await fetch(`https://api.faceit.com/match/v2/match/${matchId}`, {
                 headers: {
-                    Authorization: `Bearer ${apiKey}`,
                     'Content-Type': 'application/json',
                 },
             });
-    
+
+
             if (!response.ok) {
                 logMessage('error', `Failed to fetch match data: ${response.statusText}`);
                 throw new Error(`Failed to fetch match data: ${response.statusText}`);
             }
     
             const matchData = await response.json();
-            if (matchData.competition_type != 'championship') {
+            if (matchData.payload.entity.type != 'championship') {
                 logMessage('info', 'The requested match is not part of a Faceit Championship.');
                 throw new Error('The requested match is not part of a Faceit Championship.')
             }
 
-            const competitionId = matchData.competition_id;
-            const faction1Id = matchData.teams.faction1.faction_id;
-            const faction2Id = matchData.teams.faction2.faction_id;
+            const competitionId = matchData.payload.entity.id;
+            const faction1Id = matchData.payload.teams.faction1.id;
+            const faction2Id = matchData.payload.teams.faction2.id;
 
-            teamAName.innerHTML = matchData.teams.faction1.name;
-            teamBName.innerHTML = matchData.teams.faction2.name;
+            teamAName.innerHTML = matchData.payload.teams.faction1.name;
+            teamBName.innerHTML = matchData.payload.teams.faction2.name;
 
-
-            const allMatches = await getRelevantMatches(competitionId, faction1Id, faction2Id);
+            const faction1Matches = await getMatchesOfTeam(competitionId, faction1Id);
+            const faction2Matches = await getMatchesOfTeam(competitionId, faction2Id);
+            logMessage('info', `Fetched ${faction1Matches.length} matches for ${teamAName.innerHTML} and ${faction2Matches.length} matches for ${teamBName.innerHTML}`);
+            const allMatches = faction1Matches.concat(faction2Matches);
+            
             const matchStats = await getAllMatchStats(allMatches);
 
             const notAnalyzed = allMatches.length - matchStats.length;
@@ -174,6 +185,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
+    //outdated function, not used anymore due to faceit api restrictions with offset of new endpoint
     const getRelevantMatches = async (competitionId, faction1Id, faction2Id) => {
         
         const apiKey = await window.api.loadSetting('apiKey'); // Securely retrieve the API key
@@ -187,6 +199,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         try {
             while(true) {
+                //TODO: change to old API endpoint to get all relevant matches per team instead of going through all matches of the competition
                 const response = await fetch(`https://open.faceit.com/data/v4/championships/${competitionId}/matches?type=past&offset=${offset}&limit=${limit}`, {
                     headers: {
                         Authorization: `Bearer ${apiKey}`,
@@ -222,6 +235,37 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     };
     
+    const getMatchesOfTeam = async (competitionId, factionId) => {
+
+        //not needed due to using the old endpoint. we still use the logic here bc it's needed during match stats fetching
+        //this just fails earlier and prevents unnecessary requests
+        const apiKey = await window.api.loadSetting('apiKey'); // Securely retrieve the API key
+        if (!apiKey) {
+            throw new Error('API Key is not set. Please configure it in settings.');
+        }
+
+        try {
+            const response = await fetch(`https://www.faceit.com/api/stats/v1/stats/time/teams/${factionId}/games/cs2`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                logMessage('error', `Failed to fetch match data: ${response.statusText}`);
+                throw new Error(`Failed to fetch match data: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+
+            return data.filter(match => match.competitionId == competitionId).map(match => match.matchId);
+        }
+        catch (error) {
+            logMessage('error', error.message);
+            alert(`Error: ${error.message}`);
+        }
+    };
+
     const processMatchData = (matchStats, faction1Id, faction2Id) => {
     
         let result = { faction1Stats: {}, faction2Stats: {}};
