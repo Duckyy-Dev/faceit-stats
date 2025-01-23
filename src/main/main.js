@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url';
 import fs from 'fs';
 import updater from 'electron-updater';
 const { autoUpdater } = updater;
-import winston from 'winston';
+import bristol from 'bristol';
 
 
 let mainWindow;
@@ -12,37 +12,8 @@ let settingsWindow;
 let store;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-const customLevels = {
-    levels: {
-        error: 0,
-        warn: 1,
-        info: 2,
-        debug: 3
-    },
-    colors: {
-        error: 'red',
-        warn: 'yellow',
-        info: 'green',
-        debug: 'blue'
-    }
-};
-
-const logger = winston.createLogger({
-    level: customLevels.levels,
-    format: winston.format.combine(
-        winston.format.timestamp(),
-        winston.format.printf(({ timestamp, level, message }) => {
-            return `${timestamp} ${level}: ${message}`;
-        })
-    ),
-    transports: [
-        new winston.transports.File({ filename: path.join(__dirname, 'app.log'), level: 'debug' }),
-        new winston.transports.Console()
-    ]
-});
-
-winston.addColors(customLevels.colors);
+const appdataPath = process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Preferences' : process.env.HOME + "/.local/share");
+const logPath = path.join(appdataPath, '\\r4g-faceit-stats', '\\app.log');
 
 app.on('ready', async () => {
     const { default: Store } = await import('electron-store');
@@ -50,25 +21,37 @@ app.on('ready', async () => {
     mainWindow = createMainWindow();
     setupIPC();
 
-    logger.info('Application started.');
+    bristol.addTarget('console').withFormatter('human').withLowestSeverity('debug');
+
+    fs.exists(logPath, function (exists) {
+        if(!exists)
+        {
+            fs.writeFile(logPath, {flag: 'wx'}, function (err, data) 
+            { 
+            });
+        }
+    });
+
+    bristol.addTarget('file', { file: logPath });
+    bristol.info('Application started.');
     autoUpdater.checkForUpdatesAndNotify();
 });
 
 autoUpdater.on('update-available', () => {
-    logger.info('Update available.');
+    bristol.info('Update available.');
 });
 
 autoUpdater.on('update-downloaded', () => {
-    logger.info('Update downloaded. Will install now...');
+    bristol.info('Update downloaded. Will install now...');
     autoUpdater.quitAndInstall();
 });
 
 autoUpdater.on('error', (error) => {
-    logger.error('Update error:', error);
+    bristol.error('Update error:', error);
 });
 
 app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') app.quit();
+    app.quit();
 });
 
 app.on('activate', () => {
@@ -76,7 +59,7 @@ app.on('activate', () => {
 });
 
 app.on('uncaughtException', function (error) {
-    logger.error('Uncaught exception:', error);
+    bristol.error('Uncaught exception:', error);
     app.quit();
 });
 
@@ -158,7 +141,14 @@ function setupIPC() {
 	});
 
     ipcMain.on('log-message', (event, level, message) => {
-        logger.log({ level, message });
+        if(level == 'error')
+            bristol.error(message);
+        if(level == 'warn')
+            bristol.warn(message);
+        if(level == 'info')
+            bristol.info(message);
+        if(level == 'debug')
+            bristol.debug(message);
     });
 }
 
@@ -174,7 +164,7 @@ function loadSettings(key) {
         const settings = JSON.parse(fs.readFileSync(settingsPath));
         return settings[key] || null;
     } catch (error) {
-        logger.error('Error loading settings:', error);
+        bristol.error('Error loading settings:', error);
         return null;
     }
 }
@@ -196,7 +186,7 @@ function saveSettings(key, value) {
         settings[key] = value;
         fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2));
     } catch (error) {
-        logger.error('Error saving settings:', error);
+        bristol.error('Error saving settings:', error);
     }
 }
 
