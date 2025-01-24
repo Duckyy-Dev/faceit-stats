@@ -169,7 +169,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             logMessage('info', `Fetched ${faction1Matches.length} matches for ${teamAName.innerHTML} and ${faction2Matches.length} matches for ${teamBName.innerHTML}`);
             const allMatches = faction1Matches.concat(faction2Matches);
             
-            const matchStats = await getAllMatchStats(allMatches);
+            const matchStats = await getAllMatchStats(allMatches.filter(function(elem, pos) { return allMatches.indexOf(elem) == pos; }));
 
             const notAnalyzed = allMatches.length - matchStats.length;
             if(notAnalyzed > 0){
