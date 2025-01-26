@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "r4g-faceit-stats",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Faceit Stats Checker by R4G Duckyy",
   "main": "./src/main/main.js",
   "scripts": {
