@@ -70,6 +70,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Attach event listener to the Fetch Stats button
     fetchStatsButton.addEventListener('click', handleFetchStats);
 
+    matchLinkInput.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+            handleFetchStats();
+        }
+    });
+
     // Show loading overlay
     const showLoadingOverlay = (text) => {
         overlayText.textContent = text;
@@ -167,9 +173,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             const faction1Matches = await getMatchesOfTeam(competitionId, faction1Id);
             const faction2Matches = await getMatchesOfTeam(competitionId, faction2Id);
             logMessage('info', `Fetched ${faction1Matches.length} matches for ${teamAName.innerHTML} and ${faction2Matches.length} matches for ${teamBName.innerHTML}`);
-            const allMatches = faction1Matches.concat(faction2Matches);
+            let allMatches = faction1Matches.concat(faction2Matches);
+            allMatches = allMatches.filter(function(elem, pos) { return allMatches.indexOf(elem) == pos; });
             
-            const matchStats = await getAllMatchStats(allMatches.filter(function(elem, pos) { return allMatches.indexOf(elem) == pos; }));
+            const matchStats = await getAllMatchStats(allMatches);
 
             const notAnalyzed = allMatches.length - matchStats.length;
             if(notAnalyzed > 0){
