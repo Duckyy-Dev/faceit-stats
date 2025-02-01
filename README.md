@@ -1,6 +1,6 @@
 # Installation
 
-- Head to the Releases
+- Head to Releases
 
   ![image](https://github.com/user-attachments/assets/308a6eff-bd0b-4639-b3e4-12015b0533c8)
 
